@@ -51,3 +51,22 @@
 [0]: http://linux.vbird.org/linux_basic/0320bash/0320bash-fc4.php
 [1]: https://www.quora.com/What-is-the-difference-between-a-kernel-and-shell
 [2]: http://gaocegege.com/Blog/csp/xen-kvm
+
+
+## Hard-Disk-and-Disk-Cache
+* __Hard Disk :__
+  1. A set of stacked "disks"
+  2. Two heads, one on each side of a disk, read or write the data as the disk spins. 
+  3. Rotation speed varying from 4500 to 7200 rpm. 
+  4. Disk access time is measured in milliseconds.
+  5. Although the physical location can be identified with cylinder, track, and sector locations, these are actually mapped to a logical block address (LBA)
+  
+* __Disk Cache :__
+
+<div align=right>
+
+![image](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/WD5000AAKX_16MB_Buffer.jpg/220px-WD5000AAKX_16MB_Buffer.jpg)
+
+</div>
+
+* __Refs :__ 
