@@ -55,16 +55,16 @@
 
 ## Hard-Disk-and-Disk-Cache
 * __Hard Disk :__
-  1. A set of stacked "disks"
+  1. A set of stacked "disks".
   2. Two heads, one on each side of a disk, read or write the data as the disk spins. 
-  3. Rotation speed varying from 4500 to 7200 rpm. 
+  3. Rotation speed varies from 4500 to 7200 rpm. 
   4. Disk access time is measured in milliseconds.
-  5. Although the physical location can be identified with cylinder, track, and sector locations, these are actually mapped to a logical block address (LBA)
+  5. Although the physical location can be identified with cylinder, track, and sector locations, these are actually mapped to a logical block address (LBA).
   
 * __Disk Cache :__
   1. A disk cache is a mechanism for improving the time it takes to read from or write to a hard disk.
   2. The disk cache holds data that has recently been read and datas that are likely to be accessed next.
-  3. Also called [**Disk Buffer**][3].
+  3. Also called [**Disk Buffer**][3]. Check out link for more information.
 
 <div align=center>
 
@@ -73,3 +73,25 @@
 </div>
 
 [3]: https://zh.wikipedia.org/wiki/%E7%A3%81%E7%9B%98%E7%BC%93%E5%AD%98
+
+## Various Parts of an Operating System
+* __Important parts of the kernel :__
+  1. Process management
+  2. Memory management
+  3. Hardware device drivers
+  4. Filesystem drivers
+  5. Network management
+
+<div align=center>
+
+![image](https://github.com/alonzo3569/Linux/tree/master/Img/M1_Linux_kernel_function.png)
+![image](http://linux.vbird.org/linux_basic/0110whatislinux/os_01.gif)
+
+</div>
+  
+## Virtual-memory
+* __What is virtual memory? :__
+  1. Using a hard disk as an extension of RAM.
+  2. The part of the hard disk that is used as virtual memory is called the swap space.
+  3. Swapping: writing the whole process out to swap space.
+  4. Paging: writing only fixed size parts, usually a few kilobytes, at a time.
