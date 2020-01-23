@@ -62,11 +62,14 @@
   5. Although the physical location can be identified with cylinder, track, and sector locations, these are actually mapped to a logical block address (LBA)
   
 * __Disk Cache :__
+  1. A disk cache is a mechanism for improving the time it takes to read from or write to a hard disk.
+  2. The disk cache holds data that has recently been read and datas that are likely to be accessed next.
+  3. Also called [**Disk Buffer**][3].
 
-<div align=right>
+<div align=center>
 
 ![image](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/WD5000AAKX_16MB_Buffer.jpg/220px-WD5000AAKX_16MB_Buffer.jpg)
 
 </div>
 
-* __Refs :__ 
+[3]: https://zh.wikipedia.org/wiki/%E7%A3%81%E7%9B%98%E7%BC%93%E5%AD%98
