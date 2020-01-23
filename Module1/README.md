@@ -84,7 +84,7 @@
 
 <div align=center>
 
-![image](https://github.com/alonzo3569/Linux/tree/master/Img/M1_Linux_kernel_function.png)
+![image](https://github.com/alonzo3569/Linux/blob/master/Img/M1_Linux_kernel_function.PNG)
 ![image](http://linux.vbird.org/linux_basic/0110whatislinux/os_01.gif)
 
 </div>
