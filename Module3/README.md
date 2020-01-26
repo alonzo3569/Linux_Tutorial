@@ -18,8 +18,39 @@
   * When you type `ls -l`, the meaning of the first character are as below.  
 
 
-<table align=center>
+<table align="center">
   
+  <tr>
+    <th>File Symbol</th>
+    <th>Meaning</th>
+  </tr>
+  <tr>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th></th>
+    <th></th>
+  </tr>
+  
+</table>
+
 | File Symbol | Meaning |  
 | :---: | :---: |  
 | - | Regular file |  
@@ -29,8 +60,6 @@
 | s | socket |
 | p | Named pipe |
 | b | Block device |
-
-</table>
 
 * Log in as __Root__ : `su -` 
 * Log out __Root__ : `exit`
