@@ -17,7 +17,7 @@
 * Linux file types:
   * When you type `ls -l`, the meaning of the first character are as below.  
 
-<div align="center">
+<div align=center>
   <table> 
     <tr>
       <th>File Symbol</th>
