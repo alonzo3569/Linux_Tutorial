@@ -16,17 +16,7 @@
 
 * Linux file types:
   * When you type `ls -l`, the meaning of the first character are as below.  
-
-| File Symbol | Meaning |  
-| :---: | :---: |  
-| - | Regular file |  
-| d | Directory |  
-| l | link |  
-| c | Special file or device file |  
-| s | socket |
-| p | Named pipe |
-| b | Block device |
-
+  
 <div align=center>
 
 ![image](https://github.com/alonzo3569/Linux/blob/master/Img/M3_Linux_file_type.PNG)
