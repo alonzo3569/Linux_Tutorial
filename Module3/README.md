@@ -10,9 +10,10 @@
 <div align=center>
 
 <img width="900" height="500" src="https://github.com/alonzo3569/Linux/blob/master/Img/M3_Linux_file_structure.PNG"/><br></br>
-<img width="1000" height="400" src="https://github.com/alonzo3569/Linux/blob/master/Img/M3_Linux_file_structure_description.PNG" alt="Linux_file_structure_description" align=right/>
 
 </div>
+
+<img width="1000" height="400" src="https://github.com/alonzo3569/Linux/blob/master/Img/M3_Linux_file_structure_description.PNG" alt="Linux_file_structure_description" align=right/>
 
 * Log in as __Root__ : `su -` 
 * Log out __Root__ : `exit`
