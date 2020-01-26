@@ -17,39 +17,38 @@
 * Linux file types:
   * When you type `ls -l`, the meaning of the first character are as below.  
 
-
-<table align="center">
-  
-  <tr>
-    <th>File Symbol</th>
-    <th>Meaning</th>
-  </tr>
-  <tr>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th></th>
-    <th></th>
-  </tr>
-  
-</table>
+<div align="center">
+  <table> 
+    <tr>
+      <th>File Symbol</th>
+      <th>Meaning</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th></th>
+    </tr>
+    <tr>
+      <th></th>
+      <th></th>
+    </tr>
+    <tr>
+      <th></th>
+      <th></th>
+    </tr>
+    <tr>
+      <th></th>
+      <th></th>
+    </tr>
+    <tr>
+      <th></th>
+      <th></th>
+    </tr>
+    <tr>
+      <th></th>
+      <th></th>
+    </tr>
+  </table>
+</div>
 
 | File Symbol | Meaning |  
 | :---: | :---: |  
