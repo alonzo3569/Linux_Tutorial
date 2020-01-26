@@ -18,7 +18,7 @@
   * When you type `ls -l`, the meaning of the first character are as below.  
 
 
-<div align=center>
+<table align=center>
   
 | File Symbol | Meaning |  
 | :---: | :---: |  
@@ -30,7 +30,7 @@
 | p | Named pipe |
 | b | Block device |
 
-</div>
+</table>
 
 * Log in as __Root__ : `su -` 
 * Log out __Root__ : `exit`
