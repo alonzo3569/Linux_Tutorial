@@ -10,10 +10,27 @@
 <div align=center>
 
 <img width="900" height="500" src="https://github.com/alonzo3569/Linux/blob/master/Img/M3_Linux_file_structure.PNG"/><br></br>
+<img width="1000" height="400" src="https://github.com/alonzo3569/Linux/blob/master/Img/M3_Linux_file_structure_description.PNG" alt="Linux_file_structure_description"/>
 
 </div>
 
-<img width="1000" height="400" src="https://github.com/alonzo3569/Linux/blob/master/Img/M3_Linux_file_structure_description.PNG" alt="Linux_file_structure_description" align=right/>
+* Linux file types:
+  * When you type `ls -l`, the meaning of the first character are as below.  
+
+
+<div align=center>
+  
+| File Symbol | Meaning |  
+| :---: | :---: |  
+| - | Regular file |  
+| d | Directory |  
+| l | link |  
+| c | Special file or device file |  
+| s | socket |
+| p | Named pipe |
+| b | Block device |
+
+</div>
 
 * Log in as __Root__ : `su -` 
 * Log out __Root__ : `exit`
