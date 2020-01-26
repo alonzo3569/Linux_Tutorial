@@ -17,41 +17,6 @@
 * Linux file types:
   * When you type `ls -l`, the meaning of the first character are as below.  
 
-<center>
-  
-  <table> 
-    <tr>
-      <th>File Symbol</th>
-      <th>Meaning</th>
-    </tr>
-    <tr>
-      <th></th>
-      <th></th>
-    </tr>
-    <tr>
-      <th></th>
-      <th></th>
-    </tr>
-    <tr>
-      <th></th>
-      <th></th>
-    </tr>
-    <tr>
-      <th></th>
-      <th></th>
-    </tr>
-    <tr>
-      <th></th>
-      <th></th>
-    </tr>
-    <tr>
-      <th></th>
-      <th></th>
-    </tr>
-  </table>
-  
-<center>
-
 | File Symbol | Meaning |  
 | :---: | :---: |  
 | - | Regular file |  
@@ -61,6 +26,12 @@
 | s | socket |
 | p | Named pipe |
 | b | Block device |
+
+<div align=center>
+
+![image](https://github.com/alonzo3569/Linux/blob/master/Img/M3_Linux_file_type.PNG)
+
+</div>
 
 * Log in as __Root__ : `su -` 
 * Log out __Root__ : `exit`
