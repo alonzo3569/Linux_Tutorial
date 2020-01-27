@@ -41,6 +41,9 @@
     [foo@bar ~]$ chmod 777 1.txt
     [foo@bar ~]$ chmod 000 1.txt
     [foo@bar ~]$ chmod 764 1.txt
+    [foo@bar ~]$ chmod u=rwx,go=rx 1.txt
+    [foo@bar ~]$ chmod u=rw,+x . # equivalent to chmod 711 . or chmod u=rwx,go=x . 
+                                 # the dot (.) indicates this directory.
     ```
     
 <div align=center>
@@ -55,3 +58,5 @@
     * [__File Permissions in Linux__][0]
     * [__Linux檔案權限指令__][1]
     
+[0]: https://www.guru99.com/file-permissions.html
+[1]: https://ithelp.ithome.com.tw/articles/10202579
