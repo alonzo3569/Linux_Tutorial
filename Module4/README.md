@@ -164,4 +164,8 @@
     mask::r--
     other::r--
     ```
+ * __Reference :__
+    * [__Vbird ACL__][3]
+    
+[3]: http://linux.vbird.org/linux_basic/0410accountmanager.php#acl_talk_cmd
     
