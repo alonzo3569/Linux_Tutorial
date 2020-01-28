@@ -164,6 +164,11 @@
     mask::r--
     other::r--
     ```
+ * __Note :__
+   * You can check if there are any extra permissions set through ACL using `ls -l` command.
+   * There will be an extra “+” sign after the permissions, such as `-rw-rwxr–+`
+   * '+' sign indicates there are extra ACL permissions set which you can check by getfacl command
+
  * __Reference :__
     * [__Vbird ACL__][3]
     
