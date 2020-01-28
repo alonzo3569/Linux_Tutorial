@@ -87,7 +87,7 @@
     * Add permission for a __user__ : `setfacl -m u:user:rwx /path/to/file` (-m for modify)
     * Add permission for a __group__ : `setfacl -m g:group:rw /path/to/file`
     * To allow all files or directories to _inherit **Default** ACL_ from the directory it is within
-      * `setfacl -dm [entries] /path/to/file`
+      * `setfacl -dm [entries] /path/to/file`<br></br>
       ```console
       [root@bar ~]$ setfacl -m u::rwx,g::---,o::--- /home/alonzo/test
       [root@bar ~]$ setfacl -dm u::rx,g::rwx /home/alonzo/test
