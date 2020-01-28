@@ -150,8 +150,11 @@
       mask::r--
       other::r--
       ```
-    * Remove a specific entry : `setfacl -x u:alonzo /path/to/file`('u:alonzo': Just pick an user. Don't need to decide permission[rwx])
-    * Remove a specific entry : `setfacl -b path/to/file` (Default ACL, Addition ACL(user:alonzo:r-x), anything other than current account(::) will be remove)
+    * Remove a specific entry : `setfacl -x u:alonzo /path/to/file`
+      * 'u:alonzo': Just pick an user. Don't need to decide permission[rwx]
+    * Remove a specific entry : `setfacl -b path/to/file` 
+      * Default ACL, Addition ACL(user:alonzo:r-x), anything other than current account(::) will be remove<br></br>
+
     ```console
     # file: acl_test1         # result after removing additional ACL
     # owner: root
