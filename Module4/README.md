@@ -155,15 +155,15 @@
     * Remove a specific entry : `setfacl -b path/to/file` 
       * Default ACL, Addition ACL(user:alonzo:r-x), anything other than current account(::) will be remove<br></br>
 
-    ```console
-    # file: acl_test1         # result after removing additional ACL
-    # owner: root
-    # group: root
-    user::rwx
-    group::r--             
-    mask::r--
-    other::r--
-    ```
+      ```console
+      # file: acl_test1         # result after removing additional ACL
+      # owner: root
+      # group: root
+      user::rwx
+      group::r--             
+      mask::r--
+      other::r--
+      ```
  * __Note :__
    * You can check if there are any extra permissions set through ACL using `ls -l` command.
    * There will be an extra “+” sign after the permissions, such as `-rw-rwxr–+`
@@ -174,3 +174,111 @@
     
 [3]: http://linux.vbird.org/linux_basic/0410accountmanager.php#acl_talk_cmd
     
+## Help Command
+ * __whatis :__ `whatis ls`
+ * __--help :__ `chmod --help`
+ * __man :__ `man pwd`
+ 
+## Adding Text to Files
+ * __vim/vi__
+ * __echo "..." >/>> [filename] __
+   * __> :__ Will overwrite
+   * __>> :__ Append text to the end of the file
+   * __>/>>__ are called "Redirecting"
+   * ex. `ls -ltr > 1.txt`, `date >> 1.txt`
+   
+## Input Output Redirection
+* __Standard I/O__:
+  * Standard Input(__STDIN__)      : File Descriptor 0, using (<) or (<<) 
+  * Standard Output(__STDOUT__)    : File Descriptor 1, using (>) or (>>) 
+  * Stand Error Output(__STDERR__) : File Descriptor 2, using (2>) or (2>>)  _Note: No spaces between 2 and >_
+    <br></br>
+    ```console
+    [dmtsai@study ~]$ find /home -name .bashrc
+    find: '/home/arod': Permission denied    <== Standard error output
+                                             ### current user(dmtsai) doesn't have permission to access other user's "~" directory
+    find: '/home/alex': Permission denied    <== Standard error output
+    /home/dmtsai/.bashrc                     <== Standard output
+    ```
+* __Standard "Output" Redirection__:
+  * __Redirecting STDOUT & STDERR to different files :__
+  <br></br>
+    ```console
+    [dmtsai@study ~]$ find /home -name .bashrc > list_right 2> list_error  <== STDOUT to list_right file and STDERR to list_error file
+    ```
+  * __Discard STDOUT & STDERR to blackhole :__
+    <br></br>
+    ```console
+    [dmtsai@study ~]$ find /home -name .bashrc 2> /dev/null
+    /home/dmtsai/.bashrc  <= Only STDOUT is displayed on screen while STDERR is dumped
+    ```
+  * __Writing STDOUT & STDERR to same file :__
+    ```console
+    [dmtsai@study ~]$ find /home -name .bashrc > list 2> list  <==錯誤
+    [dmtsai@study ~]$ find /home -name .bashrc > list 2>&1     <==正確
+    [dmtsai@study ~]$ find /home -name .bashrc &> list         <==正確
+    ```
+* __Standard "Input" Redirection__:
+  * __(<) :__ Basically means file input.
+  * __(<<) :__ Allow user to setup EOF using keyboard input. 
+    <br></br>
+    ```console
+    [dmtsai@study ~]$ cat > catfile                    # 1. Take cat combine with > for example 
+    testing
+    cat file test
+    <==type [ctrl]+d to exit
+
+    [dmtsai@study ~]$ cat catfile
+    testing
+    cat file test
+
+    [dmtsai@study ~]$ cat > catfile < ~/.bashrc       # 2. "<" for file input
+    [dmtsai@study ~]$ ll catfile ~/.bashrc
+    -rw-r--r--. 1 dmtsai dmtsai 231 Mar  6 06:06 /home/dmtsai/.bashrc
+    -rw-rw-r--. 1 dmtsai dmtsai 231 Jul  9 18:58 catfile
+
+    [dmtsai@study ~]$ cat > catfile << "alonzo"       # 3. "<<" is used for setting up EOF
+    > This is a test.
+    > OK now stop
+    > alonzo  <== Enter "alonzo" to exit instead of using [ctrl]+d
+
+    [dmtsai@study ~]$ cat catfile
+    This is a test.
+    OK now stop     <== EOF won't be written into the file
+    ```
+* __Reference __:
+  * [__Vbird Redirection__][4]
+  * [__Input Output Redirection in Linux__][5]
+  
+[4]: http://linux.vbird.org/linux_basic/0320bash.php#redirect
+[5]: https://www.guru99.com/linux-redirection.html#5
+
+## $?, && and ||
+ * __$? :__ If command runs successfully, it will return `$? = 0`, else `$? ≠ 0`.
+ * __command1 && command2 :__
+   * 1. If command1 run successfully($? = 0), then run command2.
+   * 2. If command1 returns error ($? ≠ 0), then command2 won't be executed.
+ * __command1 || command2 :__
+   * 1. If command1 run successfully($? = 0), then command2 won't be executed.
+   * 2. If command1 returns error ($? ≠ 0), then run command2.
+ * 
+ ```console
+ [dmtsai@study ~]$ ls /tmp/abc && touch /tmp/abc/hehe   # If dir abc exist, touch file hehe. Else, stop.
+ [dmtsai@study ~]$ ls /tmp/abc || mkdir /tmp/abc        # If dir abc not exist, make dir abc. Else, stop.
+ [dmtsai@study ~]$ ls /tmp/abc || mkdir /tmp/abc && touch /tmp/abc/hehe  
+ 
+                   # 1. If dir abc exist, skip mkdir because of (||) and pass $? = 0 to (&&). Execute touch because of &&.
+                   # 2. If dir abc Not exist, execute mkdir and pass $? = 0 to (&&). Execute touch.
+                   # ($? = 0) or ($? ≠ 0) will be passed from left to right.
+ ```
+
+<div align=center>
+
+<img src="http://linux.vbird.org/linux_basic/0320bash//cmd_1.gif"/><br></br>
+
+</div>
+
+* __Reference __:
+  * [__Vbird $?, && and ||__][6]
+  
+[6]: http://linux.vbird.org/linux_basic/0320bash.php#redirect_com
