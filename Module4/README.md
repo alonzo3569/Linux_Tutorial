@@ -76,7 +76,7 @@
 [1]: https://www.thegeekdiary.com/understanding-basic-file-permissions-and-ownership-in-linux/
 [2]: http://linux.vbird.org/linux_basic/0210filepermission.php#UserandGroup
 
-## Access Control List(ACL)
+## Access Control List (ACL)
   * __ACL :__ 
     * A more flexible permission mechanism for file systems.
     * Give permission to an user without making user a member of group.
@@ -278,7 +278,142 @@
 
 </div>
 
-* __Reference __:
+* __Reference :__
   * [__Vbird $?, && and ||__][6]
   
 [6]: http://linux.vbird.org/linux_basic/0320bash.php#redirect_com
+
+## Linux Pipe Command
+  * __管線符號 (|) :__
+    * 能將前一個指令(__不一定為管線指令__)所產生的 __STDOUT__ 輸出給後方的 __管線指令__.
+    * 對於 __STDERR__ 會予以忽略.
+  * __管線指令(Pipe Command) :__ 
+    * 能接受 __STDIN__ 的指令才是 __管線指令__, 並非所有指令皆為管線指令.<br></br>
+        ```console
+        [dmtsai@study ~]$ ls -al /etc | less
+        ```
+      * less, more, head, tail 等都是可以接受 standard input
+      * 但ls, cp, mv 無法接受 STDIN, 就不是管線命令
+    * 管線符號 (|) 後方所接的指令, 必為 __管線指令__(如下圖). 
+    * 只接受 __STDOUT__, 對於 __STDERR__ 會予以忽略.
+    * 使用`2>&1`即可讓 __STDERR__ 被管線指令鎖運用.
+
+<div align=center>
+
+<img src="http://linux.vbird.org/linux_basic/0320bash//0320bash_3.png"/><br></br>
+
+</div>    
+    
+  * __管線指令(Pipe Command) 可大致分為以下幾類 :__
+    * __擷取命令：__ [__cut, grep__][7]
+      * 擷取訊息以"行"為單位(一次處理一行)
+      * __cut：__ <br></br>
+        ```console
+        [dmtsai@study ~]$ echo ${PATH} | cut -d ':' -f 3,5  => -d 以 ':' 為分隔單位, -f 選出分割後第3個'和'第5個部分
+        [dmtsai@study ~]$ export | cut -c 12-20             => -c 以'字元'為單位, 取出每行第12-20個字元
+        [dmtsai@study ~]$ last | cut -d ' ' -f 1            => -d 以 ':' 為分隔單位, -f 選出分割後第1個部分 last列出 user login 紀錄
+        ```
+      * __awk：__ 
+        * __cut__ 較難處理以空個或tab做區隔的資料, 這種以 __awk__ 處理較佳<br></br>
+        ```console
+        [dmtsai@study ~]$ awk '{print $1}' file                           => List 1st field from a file
+        [dmtsai@study ~]$ ls –l | awk '{print $1,$3}'                     =>  List 1 and 3rd field of ls –l output
+        [dmtsai@study ~]$ ls –l | awk '{print $NF}'                       =>  Last field of the output
+        [dmtsai@study ~]$ ls –l | awk '/Jerry/ {print}' file              =>  Search for a specific word
+        [dmtsai@study ~]$ ls –l | awk -F: '{print $1}' /etc/passwd        =>  Use ':' as field seperator)
+        [dmtsai@study ~]$ echo "Hello Tom" | awk '{$2="Adam"; print $0}'  =>   Replace words field words, $0 shows every column
+        [dmtsai@study ~]$ cat file | awk '{$2=“Imran"; print $0}'         =>  Replace words field words
+        [dmtsai@study ~]$ awk 'length($0) > 15'                           => Get lines that have more than 15 byte size
+        [dmtsai@study ~]$ ls -l | awk '{if($9 == "seinfeld") print $0;}'  => Get the field matching seinfeld in /home/iafzal
+        [dmtsai@study ~]$ ls -l | awk '{print NF}'                        => Number of fields(cloumns). NF without '$'
+        ```
+      * __grep：__ <br></br>
+        ```console
+        [dmtsai@study ~]$ last | grep 'root'     => 將 last 當中，有出現 root 的那一行就取出來
+        [dmtsai@study ~]$ last | grep -v 'root'  => 將 last 當中，"沒有" root 的就取出
+        [dmtsai@study ~]$ last | grep 'root' |cut -d ' ' -f1  => 取出含關鍵字的行, cut後取第一欄
+        [dmtsai@study ~]$ grep --color=auto 'MANPATH' /etc/man_db.conf => --color=auto 關鍵字用特殊顏色顯示
+        [dmtsai@study ~]$ egrep –i “keyword|keyword2” file = Search for 2 keywords.
+        ```
+
+    * __排序命令：__ [__sort, uniq, wc__][8]
+      * __sort：__ 
+        * 預設『以第一個』資料來排序
+        * 預設是以『文字』型態來排序
+        * 預設分隔符號為『tab』<br></br>
+        ```console
+        [dmtsai@study ~]$ cat /etc/passwd | sort                  => 預設以資料第一個字母排序
+        [dmtsai@study ~]$ cat /etc/passwd | sort -t ':' -k 3      => 以第三欄 "含後面" 排序
+        [dmtsai@study ~]$ cat /etc/passwd | sort -t ':' -k 3,3 -n => 純以第三欄來排序, 並用數字大小排序
+        ```
+      * __uniq：__ 
+        * __sort__ 完才可用 __uniq__
+        * -i  ：忽略大小寫字元的不同
+        * -c  ：進行計數<br></br>
+        ```console
+        [dmtsai@study ~]$ last | cut -d ' ' -f1 | sort | uniq     => 顯示登入的有誰
+        [dmtsai@study ~]$ last | cut -d ' ' -f1 | sort | uniq -c  => 顯示每個人的登入總次數
+        ```   
+      * __wc：__ 
+        * -l  ：列出多少行
+        * -w  ：列出多少單字(word)
+        * -m  ：列出多少字元(char)
+        * -c  ：列出多少byte<br></br>
+        ```console
+        [dmtsai@study ~]$ cat /etc/man_db.conf | wc   => 顯示 '行', 'word', 'char'
+        [dmtsai@study ~]$ last | grep [a-zA-Z] | grep -v 'wtmp' | grep -v 'reboot' | \
+        > grep -v 'unknown' |wc -l 
+        ```
+        
+    * __雙向重導向：__ [__tee__][9]
+      * __tee：__ 
+        * 讓 __STDOUT__ 可以輸出到螢幕, 也可以將 __STDOUT__ 繼續傳給下一個管線命令
+        * -a  ：以累加 (append) 的方式，將資料加入 file 當中. 否則tee會覆蓋原本文件.<br></br>
+        
+<div align=center>
+
+<img src="http://linux.vbird.org/linux_basic/0320bash//0320bash_5.png"/><br></br>
+
+</div>
+        ```console
+        [dmtsai@study ~]$ last | tee last.list | cut -d " " -f1   
+        [dmtsai@study ~]$ ls -l /home | tee ~/homefile | more  
+        [dmtsai@study ~]$ ls -l / | tee -a ~/homefile | more
+        ```
+    * __字元轉換命令：__ [__tr, col, join, paste, expand][10]
+    * __分割命令：__ [__split__][11]
+    * __參數代換：__ [__xargs__][12]
+
+[7]: http://linux.vbird.org/linux_basic/0320bash.php#pipe_1
+[8]: http://linux.vbird.org/linux_basic/0320bash.php#pipe_2
+[9]: http://linux.vbird.org/linux_basic/0320bash.php#pipe_3
+[10]: http://linux.vbird.org/linux_basic/0320bash.php#pipe_4
+[11]: http://linux.vbird.org/linux_basic/0320bash.php#split
+[12]: http://linux.vbird.org/linux_basic/0320bash.php#xargs
+ 
+ 
+## Other Useful Linux Command
+* head -1 1.txt => display first line of the file
+* tail -1 1.txt => display last line of the file
+* less up/down arrow, f,b page up page down
+* commamd --help for more information
+
+## Compress and uncompress (tar, gzip, gunzip)
+ * __tar :__ 可決定壓縮檔檔名
+   * Compress : `tar cvf alonzo.tar /home/alonzo`
+   * Uncompress : `tar xvf alonzo.tar` (可直接解壓.tar.gz)
+ * __gzip :__ 壓縮檔名為原檔名加上.gz
+   * Compress : `gzip alonzo.tar` => alonzo.tar.gz
+   * Uncompress : `gzip -d alonzo.tar.gz` or `gunzip alonzo.tar.zip`
+   
+## Truncate File Size (truncate)
+ * __truncate :__ truncate is used to shrink or extend the file size. It will lose content while shrinking.
+   * Syntax : truncate -s [ file size after truncate ] [ filename ] 
+   * Check file size `ls -l [ file name ]` => 5th column
+   * ex. `truncate -s 40 1.txt` 
+   * Compress : `tar cvf alonzo.tar /home/alonzo`
+   * Uncompress : `tar xvf alonzo.tar` (可直接解壓.tar.gz)
+   
+## Combining and Splitting Files
+  * Syntax : split -l [ seperate by how many lines? ] [ output filename ] 
+  * The output file will be like [output filename] + aa,bb,ac.... Depends on how many output files are there.
