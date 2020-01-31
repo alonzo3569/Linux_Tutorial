@@ -370,19 +370,23 @@
         * 讓 __STDOUT__ 可以輸出到螢幕, 也可以將 __STDOUT__ 繼續傳給下一個管線命令
         * -a  ：以累加 (append) 的方式，將資料加入 file 當中. 否則tee會覆蓋原本文件.<br></br>
         
-<div align=center>
-
-<img src="http://linux.vbird.org/linux_basic/0320bash//0320bash_5.png"/><br></br>
-
-</div>
         ```console
         [dmtsai@study ~]$ last | tee last.list | cut -d " " -f1   
         [dmtsai@study ~]$ ls -l /home | tee ~/homefile | more  
         [dmtsai@study ~]$ ls -l / | tee -a ~/homefile | more
         ```
-    * __字元轉換命令：__ [__tr, col, join, paste, expand][10]
+    
+    * __字元轉換命令：__ [__tr, col, join, paste, expand__][10]
     * __分割命令：__ [__split__][11]
-    * __參數代換：__ [__xargs__][12]
+    * __參數代換：__ [__xargs__][12]<br></br>
+
+        
+<div align=center>
+
+<img src="http://linux.vbird.org/linux_basic/0320bash//0320bash_5.png"/><br></br>
+
+</div>
+
 
 [7]: http://linux.vbird.org/linux_basic/0320bash.php#pipe_1
 [8]: http://linux.vbird.org/linux_basic/0320bash.php#pipe_2
