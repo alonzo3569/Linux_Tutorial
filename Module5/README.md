@@ -124,8 +124,28 @@
 [1]: http://linux.vbird.org/linux_basic/0410accountmanager.php#newgrp
 
 ## Switch Users and Sudo Access (su, sudo)
-* __Add user or group :__
-  * `useradd [user name]`
+* __su :__
+  * `su - [user name]` : 切換成其他使用者。 有加 "-" 會將要login帳戶的環境變數直接覆蓋原帳戶的環境變數(原usr環境變數消失)。 使用 `env | grep 'alonzo'` 檢驗。
+  * `su -` : 直接將身份變成 root 即可，但是這個指令卻需要 root 的密碼。
+  * 身份變成 root 後, 切換帳號不需輸入密碼。可用此解決忘記帳戶密碼的問題。
+  * root 權限強大，不建議將 root 密碼給所有使用者，建議給使用者 sudo 權限即可。
+* __sudo :__
+  * Setup user sudo permission :
+    1. Giving an account the permission to run all the command that root has, including sudo.(Not recommanded)
+      ```console
+      [root@study ~]# visudo
+      root    ALL=(ALL)       ALL  <==找到這一行，大約在 98 行左右
+      alonzo  ALL=(ALL)       ALL  <==這一行是你要新增的！
+      ```
+    2. Add user to group __wheel__
+      ```console
+      [root@study ~]# visudo
+      %wheel     ALL=(ALL)    ALL
+      [root@study ~]# usermod -a -G wheel hanzo
+      ```
+  * Check : 
+    * exit root, type `group` to check if your account belongs to group "wheel".
+    * If not, close and open a new terminal (not working) or reboot.
   
 ``` console 
 su - spiderman
@@ -138,58 +158,45 @@ su -
 visudo
 find group wheel
 usermod -aG wheel alonzo
-grep wheel /etc/wheel(group?)
+grep wheel /etc/group
 su - alonzo (!!)
 sudo dmidcode => no permission denied anymore
 ```
 
 ## Monitor Users (who, last, w, id)
-* __Add user or group :__
+* __who :__ Check how many people are currently logged into the system.
   * `useradd [user name]`
-```console
-who => Check how many people are currently logged into the system 
-last
-w
-finger
-yum install finger -y
-```
+* __last :__ Displays a list of last logged in users.
+* __finger :__ A user information lookup program. Installation : `yum install finger -y` (Not working)
+
 
 ## Talking to Users (users, wall, write)
-* __Add user or group :__
-  * `useradd [user name]`
-  
-```console
-users
-wall
-> Pleas logoff. This is a comingg down for maintanance
-> Alonzo ZHang
-> Ctrl+d
-write spider
-> Hi Spider, your web is getting bigger. Please stop
-> Enter
-write alonzo
-> Roger that. I'll shut it down. Thanks.
-> Enter
-```
+* __wall :__ Broadcast to every user.
+  ```console 
+  [alonzo@study ~]$  wall
+  > Please logoff. This system is coming down for maintanance.
+  > Alonzo Zhang
+  > Ctrl+d
+  ```
+* __write :__ Private message. (Use putty to login as hanzo to test)
+  ```console 
+  [alonzo@study ~]$ write hanzo
+  > Hi hanzo, your web is getting bigger. Please stop it.
+  > Enter
+  [hanzo@study ~]$write alonzo
+  > Roger that. I'll shut it down. Thanks.
+  > Enter
+  ```
 
 ## System Utility Commands (date, uptime, hostname, uname, which, cal, bc)
-* __Add user or group :__
-  * `useradd [user name]`
-  
-```console
-date 
-uptime
-hostname
-uname (-a)
-which [command]
-ls -l /usr/bin/pwd
-cal
-cal 9 1977
-cal 2016
-bc (binary calculator)
-quit
+* __date__
+* __uptime :__ Show time and currently login users.
+* __hostname :__ Show device name.
+* __uname (-a) :__ Show information about the current system. ex. Linux
+* __which__
+* __cal :__ Calendar. `cal 9 1977`  `cal 2016`
+* __bc :__ binary calculator, type `quit` to exit.
 
-```
 
 ## Processes and Jobs (systemctl, ps, kill, top, crontab, at)
 * Application = Service : Program that runs in your computer. Word, NTP, PPT, FireFox 
