@@ -214,35 +214,6 @@ sudo dmidcode => no permission denied anymore
   * crontab
   * at
   
-  ```console
-  su -
-  systemctl restart ntpd
-  ps -ef | grep ntpd
-  systemctl status ntpd
-  system stop ntpd
-  ps -ef | grep ntpd => will get process itself
-  systemctl enable ntpd => every time when my linux start, it will start daemon ntpd
-  ps -ef | grep rsyslog
-  systemctl status rsyslog
-  
-  ps -ef | grep ntpd
-  systmectl restart ntpd
-  ps -ef | grep ntpd
-  kill 12027
-  ps -ef | grep ntpd
-  
-  date
-  su -
-  date -s "12 Mar 2018 13:20:00"
-  date
-  exit
-  
-  crontab -e 
-  > 22(minute) 13(hour) *(everyday) 3 *(day of the week) echo "This is my first crontab-entry" > crontab.txt  => * means every 
-  :wq
-  After the time we set in crontab, crontab.txt will appear.
-  ```<br></br>
-   
 ## Daemon, Service and Systemctl Command
 * __Service :__ 常駐在記體體中的程序，且可以提供一些系統或網路功能，那就是 service。
 * __Daemon :__ 
@@ -262,7 +233,7 @@ sudo dmidcode => no permission denied anymore
    1. 列出所有 service (不論啟動與否)
    [root@study ~]# systemctl
    
-   2. 查看特定 service 狀態
+   2. 查看特定 service 狀態 (or "ps -ef | grep service")
    [root@study ~]# systemctl status atd.service
 
    3. 立刻啟動 service 
@@ -280,18 +251,43 @@ sudo dmidcode => no permission denied anymore
    7. 僅列出 .service 類型的 unit
    [root@study ~]# systemctl list-units --type=service --all
    ```
+* __Question :__ 
+  * Q : Why use __kill__ when a process can be stopped with __systemctl stop process-name__ ?
+  * A : Because sometimes the process is hung and doesn't respond to regular commands such as systemctl, so we need __kill__ command to stop it and clean all the remaining processes.
+  
 * __Ref :__ [__vbird linux__][3]
 
 [3]: http://linux.vbird.org/linux_basic/0560daemons.php#daemon
 
 
+## At & Crontab & Additional Cronjobs
+* __At :__ 處理僅執行一次就結束排程的指令，不過要執行 at 時， 必須要有 atd 這個服務。
+* __Crontab :__ crontab 指令所設定的工作將會循環的一直進行下去。執行 crontab 時， 必須要有 crond 這個服務。
+
+  ```console
+  [alonzo@study ~]$ date
+  [alonzo@study ~]$ su -
+  [root@study ~]# date -s "12 Mar 2018 13:20:00"
+  [root@study ~]# date
+  [root@study ~]# exit
+  
+  [alonzo@study ~]$ crontab -e 
+  > 22(minute) 13(hour) *(everyday) 3(month) *(day of the week) echo "This is my first crontab-entry" > crontab.txt  => * means every 
+  > echo "Time's up!"
+  :wq
+  
+  # After the time we set in crontab, crontab.txt will appear.
+  # "Time's up" will be sent to /var/spool/mail/alonzo
+  ```<br></br>
+   
+   
 ## Additional cronjobs (hourly, daily, weekly, monthly)
   
   ```console
   su -
   cd /etc
   ls -l | grep cron
-  cd cron.daily # put your script here to run daily  # put your scripts here if you don;t want to specify crontab -e
+  cd cron.daily # put your script here to run daily  # put your scripts here if you don't want to specify crontab -e
   ls -l
   cat /etc/anacrontab  => xheck when will it run daily/monthly/weekly
   cat /etc/cron.d/0hourly => check when will hourly run
@@ -364,5 +360,116 @@ grep -i error messages
 
 ```
 
+## System Maintenance Commands (shutdown, init, reboot, halt)
+
+```console
+man shutdown => gracefully power off the machine
+man init
+man reboot 
+man halt  => same as holding the power button
+
+su -
+reboot
+```
+
+##  Changing System Hostname (hostnamectl)
+
+```console
+hostname
+su -
+cat /etc/hostname
+hostnamectl set-hostname acomo
+cat /etc/hostname
+hostname
+# however your prompt still show the old hostname
+# So you have to reboot the system
+
+init 6 # or `reboot`
+hostname
+```
+
+## Finding System Information (uname, dmidecode)
+
+```console
+cat /etc/redhat-release
+uname -a
+su -
+dmidcode 
+```
   
-  
+## Finding System Architecture (arch)
+```console
+arch      # learn more about the difference between 32 and 64 bits machine
+uname -a
+```
+
+## Terminal Control Keys
+```console
+ctrl-u # erase every thing you write on command line
+ctrl-c # kill a command
+ctrl-d # exit from a program
+ctrl-z # suspend a command
+```
+## Terminal Commands (clear, exit, script)
+```console
+clear
+exit
+
+script logfile.log # will record the command and the output of the command
+ls -ltr
+history
+pwd
+exit # exit script
+```
+
+## Recover Root Password (single user mode)
+Restart the computer
+Edit grub
+Change passwd
+reboot
+```console
+reboot
+
+# In grub, you'll see two options. The first one is your actula OS, the second one is rescue OS.
+# Select hte first, press e to edit.
+# Find 'ro' which means read-only. Remove that. Right control key to release mouse.(Release from Oracle)
+rw ini=/sysroot/bin/sh
+ctrl+x
+chroot /sysroot
+passwd
+touch /.autorelabel
+exit
+https://www.unixmen.com/reset-root-password-centos-7/
+```
+
+## SOS Report
+```console
+su -
+sosreport
+Enter
+logan
+# case number: 9000
+#.tar will be saved under /var/tmp/
+# sent the package to redhat
+```
+## Environment Variables
+```console
+env # Or printenv
+
+# check out single env parameter 
+echo $PATH
+echo $HOME
+
+export TEST=1
+echo $TEST  # IF u logout, TEST will disappear. Write into .bashrc to set it  
+cp .bashrc .bashrc_origin # backup
+vim .bashrc
+> TEST='123'
+> export TEST
+:wq
+source ~/.bashrc # Or open a new terminal
+
+# Setup env parameter for every other user
+# Modify /etc/profile or /etc/bashrc
+# Danger (Not recommended)
+```
