@@ -199,12 +199,12 @@ sudo dmidcode => no permission denied anymore
 
 
 ## Processes and Jobs (systemctl, ps, kill, top, crontab, at)
-* Application = Service : Program that runs in your computer. Word, NTP, PPT, FireFox 
-* Script : Everything is written in a file, amd package it and execute it.  ex. Shell script and command.
-* Process : After we run an application, it will generate a process or Process ID. 
-* Daemon : It's also process. Runs in the background. Runs until interrupted.
-* Threads :  Every process can have multiple threads.
-* Job : Run a service ot process at a schedule time.
+* __Application = Service__ : Program that runs in your computer. Word, NTP, PPT, FireFox 
+* __Script :__ Everything is written in a file, amd package it and execute it.  ex. Shell script and command.
+* __Process :__ After we run an application, it will generate a process or Process ID. 
+* __Daemon :__ It's also process. Runs in the background. Runs until interrupted.
+* __Threads :__  Every process can have multiple threads.
+* __Job :__ Run a service ot process at a schedule time.
 
 * Process/Service Command:
   * systemctl(new) and service(old)
@@ -221,7 +221,7 @@ sudo dmidcode => no permission denied anymore
   systemctl status ntpd
   system stop ntpd
   ps -ef | grep ntpd => will get process itself
-  systemctl enable ntpd => every time will my linux start, it will start daemon ntpd
+  systemctl enable ntpd => every time when my linux start, it will start daemon ntpd
   ps -ef | grep rsyslog
   systemctl status rsyslog
   
@@ -241,7 +241,49 @@ sudo dmidcode => no permission denied anymore
   > 22(minute) 13(hour) *(everyday) 3 *(day of the week) echo "This is my first crontab-entry" > crontab.txt  => * means every 
   :wq
   After the time we set in crontab, crontab.txt will appear.
-  ```
+  ```<br></br>
+   
+## Daemon, Service and Systemctl Command
+* __Service :__ 常駐在記體體中的程序，且可以提供一些系統或網路功能，那就是 service。
+* __Daemon :__ 
+  * 達成 service 的程式我們就稱呼他為 daemon。
+  * ex. 達成循環型例行性工作排程服務 (service) 的程式為 crond 這個 daemon。
+  * Daemon 名稱之後會加上一個 d ，例如例行性命令的建立的	at, 與 cron 這兩個服務， 他的 daemon 程式檔名被取為 atd 與 crond。
+* __Systemd :__ 
+  * Linux 都用 __Systemd__ 來管理系統服務。
+  * Systemd 中每一個系統服務就稱為一個服務單位（unit）。 unit 又可分為幾種類型 ex. '.service', '.target', '.socket', '.path' ...。
+  * Systemd 就是僅有 __systemctl__ 這個指令來處理而已。
+* __Systemstl :__ 
+  * service 的啟動有兩個階段 :
+    * 一個是『開機的時候設定要不要啟動這個服務』(enable/disable)
+    * 以及『你現在要不要啟動這個服務』(active/inactive)
+   
+   ```console
+   1. 列出所有 service (不論啟動與否)
+   [root@study ~]# systemctl
+   
+   2. 查看特定 service 狀態
+   [root@study ~]# systemctl status atd.service
+
+   3. 立刻啟動 service 
+   [root@study ~]# systemctl start atd.service
+   
+   4. 立刻關閉 service (與kill意義相同)
+   [root@study ~]# systemctl stop atd.service
+   
+   5. 立刻重啟 service
+   [root@study ~]# systemctl restart atd.service
+   
+   6. 開機時 啟動/不啟動 service
+   [root@study ~]# systemctl enable/disable atd.service
+   
+   7. 僅列出 .service 類型的 unit
+   [root@study ~]# systemctl list-units --type=service --all
+   ```
+* __Ref :__ [__vbird linux__][3]
+
+[3]: http://linux.vbird.org/linux_basic/0560daemons.php#daemon
+
 
 ## Additional cronjobs (hourly, daily, weekly, monthly)
   
