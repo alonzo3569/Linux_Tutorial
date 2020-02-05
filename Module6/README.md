@@ -1,22 +1,20 @@
 # Module **6.**  Shell Scripting
 
 ## What is a shell?
-* __Funtionalities :__
-
 ```console
-echo $0  => checkout what kinda shell u're using
+echo $0  => checkout what kind of shell u're using
 cat /etc/shells => Shells that are installed in your system
 cat /etc/passwd
 ```
 
 ## Types of Shells
-* GUI: Execute command through mouse
+* __GUI :__ Execute command through mouse
   * Gnome
   * KDE
-* sh
-* bash
-* csh and tcsh
-* ksh
+* __sh__
+* __bash__
+* __csh and tcsh__
+* __ksh__
 
 ## Basic Shell Script
 ```bash
@@ -71,7 +69,7 @@ rm $guest_name.txt
   fi
   ```
 
-* __Othe if statements :__
+* __Other if statements :__
   ```bash
   #!/bin/bash
   # 1. Read cmd input and compare with letter
@@ -199,3 +197,69 @@ Sat|Sun)                echo "No backup";;
 
 esac
 ```
+
+## A Script for Checking Remote Servers Connectivity
+1. __Ping one IP__
+```bash
+#!/bin/bash
+host="192.168.56.101"
+ping -c $host  &> /dev/null # -c1: ping one time
+                            # &>: dump both output
+if [ $? -eq 0 ]
+then 
+  echo $host OK
+else
+  echo $host is NOT OK
+fi
+
+ping 192.168.56.102     # Check if this ip is avaliable
+```
+
+2. __Ping Multiple IP__
+vi myhost.txt
+```
+192.168.56.101    # Or 192.168.56.101 [space] 192.168.1.102
+192.168.56.102    # Both works
+```
+
+```bash
+#!/bin/bash
+hosts=$(find ~/ -name "mthost.txt")
+
+for ip in $(cat $hosts)     # No $ before ip
+do
+  ping -c $ip  &> /dev/null # -c1: ping one time
+                            # &>: dump both output
+  if [ $? -eq 0 ]
+  then 
+    echo $ip OK
+  else
+    echo $ip is NOT OK
+  fi
+done
+```
+
+## Aliases (alias)
+```console
+[alonzo@study ~]$ alias l="ls -al"
+[alonzo@study ~]$ alias pl="pwd; ls"
+[alonzo@study ~]$ alias dir="ls -l | grep ^d"            # ^: every thing starts with "d"
+[alonzo@study ~]$ alias d="df -h | awk '{print \$6}'"    # $ means ouput variables in Linux
+                                                         # However, we aren't outputing a var here.
+                                                         # Hence, add backslash "/" in front of it.
+[alonzo@study ~]$ alias                                  # Check all alias
+[alonzo@study ~]$ unalias d                              # Remove alias
+```
+
+## User and Global Aliases
+After logging out or closing the terminal, all alias will disappear.
+* User alias : Applies to specific user. Modify `/home/user/.bashrc`
+* Global alias : Applies to every user on the system. Modify `/etc/bashrc`. Logout or close the terminal to apply new setting.
+
+## Shell History
+* __Command :__ `history`
+* This will list all the command since you logged in.
+* __Rerun a comand :__ ![command number in history] ex. `!406`
+* `history | grep awk` `history | grep chmod`
+* __Sorurce file :__ /home/alonzo/.bash_history
+* View other users' command history : login as root and checkout their .bash_history under their home directory.
