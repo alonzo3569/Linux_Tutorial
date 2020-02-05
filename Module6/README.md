@@ -26,6 +26,7 @@ cat /etc/passwd
 a=alonzo
 a1='logan zhang'                      # If u are assigning variables to multiple words, you have to use ''
 command=`pwd`                         # For letter, use ('). For command, use (`).
+path=$(pwd)
 
 # Output variables
 echo "My id is $a"
@@ -118,7 +119,6 @@ rm $guest_name.txt
 * __Syntax :__
   ```bash
   #!/bin/bash
-
   for i in [list of content]
     do 
     # Do things here
@@ -162,4 +162,40 @@ done
 echo $1 process is stopped!!!
 ```
   
+## case Scripts 
+```bash
+#!/bin/bash
+echo
+echo Please chose one of the options below
+echo
+echo 'a = Display Date and Time'
+echo 'b = List file and directories'
+echo 'c = List users logged in'
+echo 'd = Check System uptime'
+echo
+
+  read choices
+  case $choices in
   
+a) date;;
+b) ls;;
+c) who;;
+d) uptime;;
+*) echo Invalid choice - Bye.;;   # For last case, (;;) is not necessary.
+
+  esac
+```
+
+```bash
+#!/bin/bash
+NOW=$(date +"%a")       # +"%a" : date command special syntax. Don't put space after "+"
+                        # help for more details
+  case $NOW in
+  
+Mon)                    echo "Full backup";;
+Tue|Wed|Thu|Fri)        echo "Partial backup";;
+Sat|Sun)                echo "No backup";;
+*)                      ;;
+
+esac
+```
