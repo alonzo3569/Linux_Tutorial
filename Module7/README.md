@@ -258,7 +258,7 @@
 * __traceroute :__ 顯示到目標 IP 的所有節點(IP)
 * __netstat :__ 可查詢 IP:port 的狀態，以及啟動該 port 的程式
   ```console
-  1. 觀察本機上頭所有的網路連線狀態
+  1. 觀察本機上頭所有的網路連線狀態 (LISTEN + ESTABLISH)
   [root@www ~]# netstat -atunp
   Active Internet connections (servers and established)
   Proto Recv-Q Send-Q Local Address     Foreign Address     State       PID/Program
@@ -270,7 +270,8 @@
   ....(底下省略)....
   # State : LISTEN => 等待連線的 port
           : ESTABLISH => 已建立連線
-  # netstat -tulnp : 僅列出有在 Listen 的 port
+  # netstat -tulnp : 僅列出有在 Listen(尚未連線) 的 port (無 ESTABLISH)
+  * 查以連接用'netstat -atunp' 未連接用 'netstat -tlunp'
   * 由上圖可知，僅建立一條網路連線
   * 由遠端主機 192.168.1.101 啟動一個大於 1024 的埠口向本地端主機 192.168.1.100 的 port 22 
   * kill -9 4716 取消連線
@@ -292,22 +293,130 @@
     [alonzo@www ~]$ nslookup facebook.com
     [alonzo@www ~]$ nslookup 8.8.8.8
     ```
-* __nslookup :__ 
+* __telnet :__ 
   * 連結到伺服器以及連結到 PTT BBS 站 (ptt.cc) 所用的指令，還可以連結到某個 port (服務) 
-```console 
-[root@www ~]# telnet [host|IP [port]]
+    ```console 
+    [root@www ~]# telnet [host|IP [port]]
 
-# 範例一：連結到 PTT BBS 站
-[root@www ~]# yum install telnet  <==預設沒有安裝這軟體
-[root@www ~]# telnet ptt.cc
+    # 範例一：連結到 PTT BBS 站
+    [root@www ~]# yum install telnet  <==預設沒有安裝這軟體
+    [root@www ~]# telnet ptt.cc
 
-1. 查詢 LISTEN 中的 port
-[alonzo@www ~]$ netstat -atunp
+    1. 查詢 LISTEN 中的 port
+    [alonzo@www ~]$ netstat -atunp
 
-2. 連上 port
-telnet localhost 631
+    2. 連上 port
+    [alonzo@www ~]$ telnet localhost 631
+    Trying ::1...
+    Connected to localhost.    # netstat -atunp will show port 631 "Establish"
+    Escape character is '^['
+    Connection close by foreign host.
+    ```
+* __ftp :__ 讓使用者可以到 FTP 伺服器上下載資料
+```console
+1. 安裝 ftp
+[root@www ~]# yum install ftp
+
+2. 登入崑山科大 anonymous 登入
+[alonzo@www ~]$  ftp ftp.ksu.edu.tw # ftp.ntu.edu.tw 可用 anonymous 登入 無下載權限
+ftp> help  # 查指令
+ftp> get filename   <==下載單一檔案，檔名為 filename 
+ftp> mget filename* <==下載多個檔案，可使用萬用字元 *
+ftp> put filename   <==上傳 filename 這個檔案到伺服器上
+ftp> delete file    <==刪除主機上的 file 這個檔案
+ftp> bye            <==結束 ftp 軟體的使用
+
+3. 若對方主機的 ftp 服務開啟在 318 port
+[alonzo@www ~]$ ftp 對方FTP伺服器IP 318
+* ftp 通常使用 port21 用 'netstat -atunp' 查詢
 ```
-    
+
+* __lftp :__ ftp script
+```console
+1. ftp script
+[alonzo@www ~]$ vim lftp.ksu.sh   # ftp 的 script 非 sh3ll script
+> open ftp.ksu.edu.tw             # 因此不用 #!/bin/bash
+> cd /pub/CentOS/                 # 直接使用 FTP 伺服的指令
+> mget -c -d RPM-GPG*
+> bye
+[root@www lftp]# lftp -f lftp.ksu.sh  # 執行
+
+2. 操作 FTP 的 "shell script"
+[alonzo@www ~]$ vim lftp.ksu.sh
+> lftp -c "open ftp.ksu.edu.tw   # 加入 lftp -c "" 而已
+> cd /pub/CentOS/
+> mget -c -d RPM-GPG*
+> bye"
+[alonzo@www ~]$ sh lftp.ksu.sh   # 無標頭 #!/bin/bash
+```
+
+* __wget :__ wget 支援 HTTP 和 FTP 協定，可下載這兩種伺服器上的檔案
+```console
+[alonzo@www ~]$ wget http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.39.tar.bz2
+```
+
+* __tcpdump :__ 監聽封包的流向與內容
+```console
+1. 以 IP 與 port number 捉下 eth0 這個網路卡上的封包， ctrl+c 退出
+[root@www ~]# tcpdump -i eth0 -nn
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
+17:01:47.360523 IP 192.168.1.101.1937 > 192.168.1.100.22: Flags [.], ack 196, win 65219, 
+17:01:47.362139 IP 192.168.1.100.22 > 192.168.1.101.1937: Flags [P.], seq 196:472, ack 1,
+
+* -nn：直接以 IP 及 port number 顯示，而非主機名與服務名稱
+* -i ：後面接要監聽的網路介面，例如 eth0, lo, ppp0
+* -X ：列出十六進位 (hex) 以及 ASCII 的封包內容
+
+# 17:01:47.362139：這個是此封包被擷取的時間，『時:分:秒』
+# (>) 的符號指的是封包的傳輸方向
+# seq 196:472 傳輸的資料為整體資料的 196~472 byte
+# 2 IP 相互溝通(一去一回) 三向交握
+
+2. 監聽網路介面 enp0s3 port 21 的 tcp 傳輸
+[root@www ~]# tcpdump -i eth0 -nn port 21
+[alonzo@www ~]$ cd /lftp/              # 開另一 terminal
+[alonzo@www ~]$ ./lftp_shell_script.sh # 執行 ftp 下載 (ftp 也是用 tcp)
+                                     # 回 tcpdump terminal 看結果
+3. 監聽封包內容
+[root@www ~]# tcpdump -i enp0s3 -nn -X 'port 21'
+[alonzo@www ~]$ ftp ftp.ksu.edu.tw   # 開另一 terminal
+                                     # 回 tcpdump terminal 看結果
+                                     # 沒看到 anonymous(?) encrypted(?)
+    0x0000:  4500 0048 2a28 4000 4006 1286 7f00 0001  E..H*(@.@.......
+    0x0010:  7f00 0001 0015 80ab 8355 2149 835c d825  .........U!I.\.%
+    0x0020:  8018 2000 fe3c 0000 0101 080a 0e2e 0b67  .....<.........g
+    0x0030:  0e2e 0b61 3232 3020 2876 7346 5450 6420  ...a220.(Login.
+    0x0040:  322e 302e 3129 0d0a                      2.0.1)..
+
+```
+
+* __nc :__ 與 telnet 相似，但 nc 可以輸入訊息給 port 
+  * __telnet__ 與 __nc__ 皆可與 listening port 連線
+  * 但 __nc__ 可以啟動一個新的 listening port
+  * __telnet__ 要透過 `netstat -tlunp` 查詢可連接 port
+```console
+1. 安裝 nc
+[root@www ~]# yum install nc
+
+2. 連上 port 25 
+[root@www ~]# nc localhost 25
+
+3. 啟動一個 port 20000 來監聽使用者的連線要求 (2000以上為使用者自訂port?才可打字傳輸?)
+[root@www ~]# nc -l localhost 20000 &   # 若顯示 stopped(背景執行) 則 `fg` 啟用
+                                        # `netstat -tlunp` 查看 PID 
+                                        # 可用 kill PID 刪除背景執行
+[root@www ~]# netstat -tlunp | grep nc  # 開新 terminal 查看 20000 是否 LISTEN
+[root@www ~]# nc localhost 20000        # 連接 port 20000 即可打字溝通
+[root@www ~]# netstat -atunp | grep nc  # 再開一 terminal 觀察連接情況
+                                        # 應有 2 nc 和一 telnet 服務
+                            
+4. 用 nc 啟用 port 再用 telnet 連接打字溝通
+[root@www ~]# nc -l localhost 20000 &
+[root@www ~]# telnet localhost 20000
+[root@www ~]# netstat -atunp | grep nc      # 再開一 terminal 觀察連接情況
+[root@www ~]# netstat -atunp | grep telnet  # 應有一 nc 和一 telnet 服務
+```
 ## Network Files and Commands (ping, ifconfig, ifup, ifdown, netstat, tcpdump)
 Interface Detection
 * Assigning an IP address
@@ -431,3 +540,37 @@ ls => will see putty.tar.gz
 ```
 
 ## curl and ping commands
+
+
+## TCP/IP framework
+  * File Transfer Protocal
+  * The protocal that is used to trans
+proxy?
+
+
+## Setup Personal Webpage on NTU Server via FTP
+1. [__FTP Client Download__][]
+2. __NTU personal web server :__ `homepage.ntu.edu.tw (140.112.2.140)`
+  ```console
+  [alonzo@www ~]$ nslookup homepage.ntu.edu.tw
+  Server: 192.168.1.1        => Comes from local DNS server?! wow
+  Address: 192.168.1.1#53    => Expecting NTU DNS, cool =)
+
+  Non-authoritative answer:
+  Name: homepage.ntu.edu.tw
+  Address: 140.112.2.140
+  ```
+3. [__Login NTU server via Filezilla__][]
+
+4. __Upload index.html to NTU server__
+5. __Checkout your webpage :__ 
+  * `http://homepage.ntu.edu.tw/~r07525074/`
+  * `http://140.112.2.140/~r07525074/`
+__Note :__ 
+  * FTP server : port 21 (by convention) 
+  * [Webpage login FTP server failed][]
+
+
+[]: https://filezilla-project.org/
+[]: https://oper.cc.ntu.edu.tw/docs/student_homepage.html
+[]: https://www.ptt.cc/man/NTU-Aikido/D5B5/M.1169717432.A.6F2.html
