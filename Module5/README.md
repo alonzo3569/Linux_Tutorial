@@ -145,7 +145,7 @@
       ```
   * Check : 
     * exit root, type `group` to check if your account belongs to group "wheel".
-    * If not, close and open a new terminal (not working) or reboot.
+    * If not, close and open a new terminal (not working) or logout or reboot.
   
 ``` console 
 su - spiderman
