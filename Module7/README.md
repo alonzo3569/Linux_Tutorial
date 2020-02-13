@@ -256,6 +256,24 @@
   rtt min/avg/max/mdev = 10.056/11.910/15.453/2.506 ms
   ```
 * __traceroute :__ 顯示到目標 IP 的所有節點(IP)
+  [root@www ~]# traceroute [選項與參數] IP
+  # 範例一：偵測本機到 yahoo 去的各節點連線狀態
+[root@www ~]# traceroute -n tw.yahoo.com
+traceroute to tw.yahoo.com (119.160.246.241), 30 hops max, 40 byte packets
+ 1  192.168.1.254  0.279 ms  0.156 ms  0.169 ms
+ 2  172.20.168.254  0.430 ms  0.513 ms  0.409 ms
+ 3  10.40.1.1  0.996 ms  0.890 ms  1.042 ms
+ 4  203.72.191.85  0.942 ms  0.969 ms  0.951 ms
+ 5  211.20.206.58  1.360 ms  1.379 ms  1.355 ms
+ 6  203.75.72.90  1.123 ms  0.988 ms  1.086 ms
+ 7  220.128.24.22  11.238 ms  11.179 ms  11.128 ms
+ 8  220.128.1.82  12.456 ms  12.327 ms  12.221 ms
+ 9  220.128.3.149  8.062 ms  8.058 ms  7.990 ms
+10  * * *
+11  119.160.240.1  10.688 ms  10.590 ms 119.160.240.3  10.047 ms
+12  * * * <==可能有防火牆裝置等情況發生所致
+
+
 * __netstat :__ 可查詢 IP:port 的狀態，以及啟動該 port 的程式
   ```console
   1. 觀察本機上頭所有的網路連線狀態 (LISTEN + ESTABLISH)
@@ -287,11 +305,11 @@
     ```console
     [alonzo@www ~]$ host facebook.com 8.8.8.8
     ```
-* __nslookup :__ 
-  * 與 host 雷同，但可由 IP 查主機名稱
+* __nslookup/dig :__ 
+  * 與 host 雷同，但可由 IP 查主機名稱 (dig 有更多資訊)
     ```console
-    [alonzo@www ~]$ nslookup facebook.com
-    [alonzo@www ~]$ nslookup 8.8.8.8
+    [alonzo@www ~]$ nslookup/dig facebook.com
+    [alonzo@www ~]$ nslookup/dig 8.8.8.8
     ```
 * __telnet :__ 
   * 連結到伺服器以及連結到 PTT BBS 站 (ptt.cc) 所用的指令，還可以連結到某個 port (服務) 
@@ -540,24 +558,403 @@ ls => will see putty.tar.gz
 ```
 
 ## curl and ping commands
+```console
+curl www.google.com
+curl -o http-link  => will download file 
+```
+
+## FTP
+* FTP port 21 / ssh,scp 22 / dns 53 
+* Setup FTP Server!  alonzo server hanzo client
+```console
+[alonzo@server ~]$
+1. download
+su -
+rpm -qa | grep vsftpd # check if the FTP server package is installed
+yum install vsftpg => server package
+
+2. configure
+cd /etc/vsftpd
+cp vsftpd.conf vsftpd.conf .orig => backup
+vim vsftpd/conf
+> /anonymous_enable=NO
+> uncomment ascii_upload_enable=YES & ascii_download_enable=YES
+> uncomment ftpd_banner
+EOF add
+> # Local Time
+> use_localtime=YES
+> :wq
+
+3. start server
+systemctl start vsftpd
+systemctl status vsftpd
+systemctl enable vsftpd => starts every time system reboot
+systemctl stop firewalld => not recommend , stop only
+systemctl disable firewalld => won't start every time system reboot
+exit root
+
+
+[hanzo@client ~]$
+su - 
+yum install ftp => client package
+su - hanzo
+touch 1.txt
+ls -ltr > 1.txt
+ftp 192.168.1.58 # ip address of the server
+enter
+enter
+bin => to binary mode
+hash => show me download progress using #
+put 1.txt upload file
+bye
+
+[alonzo@server ~]$
+ls => will see 1.txt
+```
+
+## SCP secure copy protocol
+* Similiar to FTP, but it adds security and authentication
+* Port 22 (Same as SSH) (need sshd runnning)
+```console
+touch jack
+echo Hello world > jack
+ifconfig enp0s3 => at remote's terminal(find remote ip)
+scp jack hanzo@remoteIP:/ho,e/hanzo
+hanzo's passwd
+ls => check at remote's terminal
+```
+
+## Remote Sychronization
+* rsync is a lot faster than ftp or scp
+* Mostly used to backup files and dirs from one server to another(run in crontab)
+* rsync Prot 22 (need sshd runnning)
+```console
+yum install rsync (CentOS/Redhat)
+apt-get install rsync (Ubuntu/Debian)
+
+# sync a file on local machine
+tar cvf backup.tar .(= /home/alonzo)
+mkdir /tmp/backups
+rsync -zvh backup.tar /tmp/backups/
+
+# sync a dir on local machine
+rsync -azvh /home/alonzo /tmp/backups
+
+# sync a file to remote machine
+mkdir /tmp/backups => on remote
+rsync -azv backup.tar hanzo@remoteIP:/tmp/backups
+ls => check on remote
+
+# sync a file from remote machine
+rsync -azv hanzo@remoteIP:remotefilepath localfilepath
+```
+
+## System Update and Repos
+* yum (CentOS link source /etc/yum.repos.d) apt-get (Ubuntu) 
+* rpm (Redhat Package Manager)
+* yum : download + install
+* rpm : install
+```console
+yum install bind
+yum install httpd
+rpm -qa => query all
+rpm -qa | wc -l
+
+rpm -hiv /tmp/packagename.rpm => install pkg
+
+rpm -qa | grep bind
+rpm -e pkg_full_name => remove package 
+rpm -qa | grep bind => check
+
+yum remove bind
+```
+
+## System Upgrade/Patch Management
+* 2 types of upgrades
+  * Major version = 5,6,7  => No command
+  * Minor version = 7.3 to 7.4 => yum update -y (say yes to every question)
+* yum update (preserve old pkg) v.s. yum upgrade (delete old pkg)
+```console
+cat /etc/redhat-release => check version
+yum update
+```
+
+## Create Local repo from DVD
+take all the pkg from DVD
+when you can't access internet
+and you want to install pkg
+this is when createrepo come to rescue
+```console
+# create snapshot in Oracle
+su -
+c
+# Oracle => Optical Drives(VM terminal top bar) => CentOS DVD => open
+# DVD is not monted on pc
+df -h => /dev/sr0 Mounted on /run/media/alonzo/CentOS 7 x86_64
+cd /
+mkdir localrepo
+cd /run/media/alonzo/CentOS 7 x86_64  => No spac in Linux
+cd /run/media/alonzo => press tab, will see /run/media/alonzo/CentOS\ 7\ x86_64/
+cd /run/media/alonzo/CentOS\ 7\ x86_64/
+cd Packages
+ls -ltr | wc -l => check how many pkgs
+du -sh . => check the size of /run/media/alonzo/CentOS\ 7\ x86_64/
+df -h => /dev/mapper/centos-root is our device's space, check if it's big enough
+cp -rv /run/media/alonzo/CentOS\ 7\ x86_64/Packages/* ~/localrepo
+cd /etc/yum.repos.d/ # remove all source link for yum
+ls -ltr
+rm -rf /etc/yum.repos.d/* => make sure you hav snapshot
+vi local.repo
+> [centos7]
+> name=centos7
+baseurl=file///localrepo/enable=1
+gpgcheck=0
+:wq!
+createrepo /localrepo/
+yum clean all => clean all repo in cache
+yum repolist all
+yum install tomcat => test
+```
+
+## Advance Package Managment
+```console
+# method 1
+rpm -qa | grep ksh => chek if ksh is already installed
+yum install  ksh* => anything related to ksh
+yum remove ksh*
+
+# method 2
+google: download ksh for centOS 7
+find rpm file copy link
+wget pkg_link 
+rpm -hiv pkg_name => install pkg
+rpm -e pkg_name => run 'rpm -qa | grep ksh' for pkg name
+rpm -qc pkg_name => list all the pkg configuration file
+which ksh  => find out path of the command
+rp -qf pathofcommand(/usr/bin/ksh) => show this command belongs to which pkg
+```
+
+## Rollback Update and Patches
+* yum update can rollback
+* yum grade can't roolback (since it delete old pkgs)
+* Rollbak a pkg
+  * yum history undo [id] (id of the yum install pkg)
+* Rollback an "update" => 7.1 to 7.0 => lots of pkgs are involved
+  * yum history undo [id]
+```console
+take a snapshot first
+yum install screen
+rpm -qa | grep screen
+yum history  => find install id
+yum history undo 17
+rpm -qa | grep screen
+
+yum update
+yum history => I,U install and Update. Take snapshot
+yum history
+yum history undo 19
+```
+
+## SSH and Telnet
+* Telnet : Unsecured connection between pcs (Only use for trobleshooting now)
+* SSH : Secure
+```console
+ps -ef | grep sshd => sshd process name '/usr/sbin/sshd -D'
+# sshd is the service for listening (server) 
+# d for deamon
+# type 'systemctl stop sshd' => to stop service /usr/sbin/sshd -D => can't ssh anymore
+# systemctl start sshd => restart
+```
+## DNS Domain Name System
+* Purpose :
+  1. A Record : Hostname to IP
+  2. PRT Record : IP to Hostname 
+  3. CNAME Record : Hostname to Hostname 
+* Service(Daemon) for DNS server : `system restart named`
+```console
+```
+
+## NTP Network time protocol
+* NTP port 123
+```console
+yum install ntpd -y
+
+rpm -qa | grep ntp
+
+vi /etc/ntp.conf
+> server 8.8.8.8 => google DNS server, ususally used as ntp server
+
+systemctl start ntpd
+systemctl enable ntpd => start at boot
+systemctl status ntpd => Chk if it is running or run ps -ef |grep ntp
+
+ntpq => see google.public
+quit
+systemctl stop ntpd
+```
+
+## chronyd
+* Same as ntp, more advance. Time synchronization. 
+```console
+su -
+yum install chrony
+rpm -qa | grep chrony
+vi /etc/chrony.conf
+> server 8.8.8.8 => google DNS server
+> :wq
+
+systemctl status chronyd => Don't run ntp and chrony at th same time
+systemctl disable ntpd => disable ntp if active
+systemctl enable chronyd
+chronyc
+> help
+> sources => show server for time synchronizing
+> quit
+
+vi /etc/chrony.conf
+> remove server 8.8.8.8
+systemctl restart chronyd
+```
+
+## Sendmail
+```console
+rpm -qa | grep sendmail
+yum install sendmail
+yum install sendmail-cf
+
+cd /etc/mail/
+ls -ltr => find sendmail.md => mail relayer : a server that send or recieve you eamil
+vim sendmail.md
+> 
+
+systemctl restart sendmail
+systemctl status sendmail
+
+mail -s "mailsetup" alonzo@hotmail.com => send email
+hello world!
+Ctrl+d to quit 
+```
+
+## Web server (httpd)
+```console
+su -
+rpm -qa | grep httpd
+yum install httpd
+
+cd /stc/httpd/conf/
+vi httpd.conf
+> Listen 80 => listen on port 80
+> DocumentRoot "/var/www/html"
+
+cd /var/www/html/
+ls -ltr => find index.html
+# If u cannot find index.html
+# Create one
+vi index.html => write html
+
+systemctl stop firewalld (?)
+systemctl status firewalld (?)
+systemctl start httpd
+systemctl enable httpd
+systemctl status httpd
+
+ifconfig => find ip
+google your ip => u can see your website
+```
+
+## Central Logger (rsyslog)
+* Assume that we have a hundreds of devices in the network, they all have its own system logfile
+* It will be much easier to manage if we send all the logs to one drvice(server).
+* Send every device's(client) log to a server. 
+```console
+yum install rsyslog
+rpm -qa | rsyslog.conf
+
+vi /etc/rsyslog.conf
+> remote-host:514 => central logger IP
+systemctl status rsyslog
+systemctl start rsyslog
+```
+
+## Linux OS Hardening
+```console
+chage –l username => check passwd status
+
+# Remove un-wanted packages
+rpm -qa | wc -l => How many pkg do I have
+rpm -e => remove pkg. look out for dependencies
+systemctl -a
+
+# Check on listening port
+netstat -tlunp
+
+# Firewall (By default won't alloow WAN communicate to port in LAN)
+firewall-config => GUI firewall
+> Add Port...
+
+iptable --help
+pdf
+```
+
+## OpenLDAP Instllation
+```console
+su -
+yum install *openldap* => any patches that related to openldap
+
+systemctl start slapd
+systemctl status slapd
+cd /etc/openldap/slapd.d/
+
+```
+## Tracing Network Traffic (traceroute)
+```console
+traceroute www.google.com => openrg.home(192.168.1.1) => modem = gateway(netstat -rnv to check)
+```
+
+## Open an Image File
+```console
+# Don't work on putty or ssh
+cd ~/Desktop
+su -
+yum install ImageMagick -y
+rpm -qa | grep ImageM => check install
+display ~/Desktop/image.png # Don't need to start service (systemctl start). Since it's a program?
+```
+
+## SSH-Keys - Access Remote Server without Password (SSH-Keys)
+* Server : heron
+* Client : my pc
+
+```console
+Client : my laptop
+ssh-keygen  # passphrase??  # Create key
+ssh-copy-id root@serverIP # copy key to server
+# input root@serverIP passwd
+
+Server : heron
+cat /root/.ssh/authorized_keys # the client's key will be stored here
+
+Client : my laptop
+ssh root@serverIP # Don't have to input passwd anymore
+```
 
 
 ## TCP/IP framework
   * File Transfer Protocal
   * The protocal that is used to trans
 proxy?
-
+port summarize
 
 ## Setup Personal Webpage on NTU Server via FTP
 1. [__FTP Client Download__][]
 2. __NTU personal web server :__ `homepage.ntu.edu.tw (140.112.2.140)`
   ```console
   [alonzo@www ~]$ nslookup homepage.ntu.edu.tw
-  Server: 192.168.1.1        => Comes from local DNS server?! wow
+  Server: 192.168.1.1        => Comes from local DNS server(Our modem)
   Address: 192.168.1.1#53    => Expecting NTU DNS, cool =)
 
-  Non-authoritative answer:
-  Name: homepage.ntu.edu.tw
+  Non-authoritative answer:  => if you see this, it means our local dns doesn't 
+  Name: homepage.ntu.edu.tw     have the information. So it lookup at the internet.
   Address: 140.112.2.140
   ```
 3. [__Login NTU server via Filezilla__][]
@@ -574,3 +971,8 @@ __Note :__
 []: https://filezilla-project.org/
 []: https://oper.cc.ntu.edu.tw/docs/student_homepage.html
 []: https://www.ptt.cc/man/NTU-Aikido/D5B5/M.1169717432.A.6F2.html
+
+
+* 路由"器" => 建立起獨立內網LAN(拒絕外在SSH SCP等權限)，防止IP重複使用
+* route table 是屬於該裝置的 route table
+* route table 理論上 各裝置應相同 GW(唯一對外IP)也要相同
