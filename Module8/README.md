@@ -165,7 +165,7 @@ fdisk -l
 
 <div align=center>
 
-<img src="https://github.com/alonzo3569/Linux/blob/master/Img/M8_disk_partition_unmounted_sdb1.PNG"/><br></br>
+<img src="https://github.com/alonzo3569/Linux/blob/master/Img/M8_LVM_structure.PNG"/><br></br>
 
 </div>
    
