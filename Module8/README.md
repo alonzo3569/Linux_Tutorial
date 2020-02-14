@@ -296,7 +296,7 @@ vgdisplay oracle_vg => show volume group
 * __硬體磁碟陣列 (hardware RAID)__ 是透過磁碟陣列卡來達成陣列的目的。 磁碟陣列卡上面有一塊專門的晶片在處理 RAID 的任務，效能較好
 * __軟體磁碟陣列 (software RAID)__ 透過軟體來模擬硬體磁碟陣列卡，價格較磁碟陣列卡低
 * __RAID 種類 :__
-  1. RAID-0 (等量模式, stripe)：效能最佳，無法備份
+1. RAID-0 (等量模式, stripe)：效能最佳，無法備份
   
 <div align=center>
 
@@ -305,7 +305,7 @@ vgdisplay oracle_vg => show volume group
 </div>
 
 
-  2. RAID-1 (映射模式, mirror)：完整備份，容量較小
+2. RAID-1 (映射模式, mirror)：完整備份，容量較小
     
 <div align=center>
 
@@ -313,7 +313,7 @@ vgdisplay oracle_vg => show volume group
 
 </div>
 
-  3. RAID 5：效能與資料備份的均衡考量
+3. RAID 5：效能與資料備份的均衡考量
 
 ## Storage
 * __NAS :__ 
