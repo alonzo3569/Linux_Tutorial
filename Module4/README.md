@@ -38,12 +38,14 @@
     [foo@bar ~]$ chmod ugo+r 1.txt
     [foo@bar ~]$ chmod a+r 1.txt
     [foo@bar ~]$ chmod ugo-rwx 1.txt
-    [foo@bar ~]$ chmod 777 1.txt # r = 4, w = 2, x = 1 thus, rwx = 4+2+1 =7
+    [foo@bar ~]$ chmod 777 1.txt   # r = 4, w = 2, x = 1 thus, rwx = 4+2+1 =7
     [foo@bar ~]$ chmod 000 1.txt
     [foo@bar ~]$ chmod 764 1.txt
     [foo@bar ~]$ chmod u=rwx,go=rx 1.txt
-    [foo@bar ~]$ chmod u=rw,+x . # equivalent to chmod 711 . or chmod u=rwx,go=x . 
-                                 # the dot (.) indicates this directory.
+    [foo@bar ~]$ chmod u=rw,+x .   # equivalent to chmod 711 . or chmod u=rwx,go=x . 
+                                   # the dot (.) indicates this directory.
+    [foo@bar ~]$ chmod -R u+w src/ # give w permission to every sub directory and file
+                                   # Without -R permission of files and dir under src won't change
     ```
     
 <div align=center>
@@ -421,3 +423,14 @@
 ## Combining and Splitting Files
   * Syntax : split -l [ seperate by how many lines? ] [ output filename ] 
   * The output file will be like [output filename] + aa,bb,ac.... Depends on how many output files are there.
+
+## Troubleshooting File Issues
+* __Permission Denied :__ 
+  1. Check source dir/file permission and target dir/file permission
+  2. Check Parent directory permission
+* __File doesn't exist :__
+  1. Check upper lower case of the dir/file
+  2. Check absolute path and relative path
+* __Hidden files/directory :__
+  1. Every file or directory starts with '.' will be hidden
+  2. `ls -a`
