@@ -343,8 +343,8 @@ vgdisplay oracle_vg => show volume group
 ```console
 [root@disk ~]# df -T                 => checkout file system type:/dev/sdb1:/data:xfs
 [root@disk ~]# umount /data          => unmount dir before file sys check
-[root@disk ~]# xfs_repair /dev/sdb1  => choose a xfs file system dir
-[root@disk ~]# echo $?               => see exit code
+[root@disk ~]# xfs_repair /dev/sdb1  => choose a xfs file system dir (fsck /dev/sdb1)
+[root@disk ~]# echo $?               => see exit code (both fsck and xfs have exit code)
 [root@disk ~]# mount /dev/sdb1 /data => mount dir back
 ```
 
@@ -453,3 +453,104 @@ vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
 /etc/init.d/network restart
 ip addr                  => Success!
 ```
+
+## Fixing Corrupted FileSystem
+* __Types of filesystem :__ ext3, ext4, xfs, NTFS etc.
+* __Filesystem partitions :__ `/var, /etc, /root, /home` etc.
+* __Check filesystem :__ `df -h`  `fdisk -l`
+* __Scenarios :__
+  1. The system fails to boot.
+  2. Files on the system become corrupt (often you may see input/output error).
+  3. Attached drive (including flash drives/SD cards) is not working as expected.
+* __Troubleshooting steps :__
+  1. Check /var/log/messages
+  2. Unmount filesystem. 
+  3. Run `fsck` on the partition(/dev/sda1) Not on mount point.
+  4. Mount it back.
+* __/ :__ What if "/" is the corrupted fileSystem? Once i umount "/", the system shut down.
+  1. VM Gnome terminal -> Device -> choose disk image -> CentOS.iso -> reboot
+  2. Remember "/" partition name (dev/sda1). "/" will be unmouted later and u can't check.
+  3. Troubleshooting
+  4. Skip to shell. Don't mount it since we need to run `fsck`
+  5. Double check "/" partition. Not sure if u can run `fdisk -l` in this mode
+  5. Run `fsck` if it is ext. Run `xfs_repair` if it is xfs
+  6. Unmont CentOS.iso -> VM Gnome terminal -> Device -> Force umount
+  7. Reboot
+
+## Linux System Performance Issues
+* __System running slow scenarios :__ 
+  * Processing
+  * Disk writing
+  * Networking, file transfer
+  * Hardware
+* __Troubleshooting steps :__
+  ```console
+  # Check host information 
+  [root@debug ~]# hostname
+  [root@debug ~]# #whoami
+  
+  # Check disk space
+  [root@debug ~]# df -h | grep -v tmpfs       => Check disk space 99%
+  [root@debug ~]# du -ah / | sort -nr | more  => Check every file's size under /
+                              => Sort from Large file to small file
+  
+  # Check processing
+  [root@debug ~]# top         => Check out PID %MEM %CPU
+  [root@debug ~]# free -m     => Check out MEM and swap
+  [root@debug ~]# lscpu       => cpu info
+      
+  # Disk status (I/O issuse)
+  [root@debug ~]# iostat -y 5 => give me info every 5 sec
+  
+  # Network
+  # Open a terminal and ping google.com for testing purposes
+  [root@debug ~]# tcpdump -i enp0s3 | grep [google.com's IP] => check if my pc is commmunicating with the device
+  [root@debug ~]# lsof -i -P -n  => Cleaner than netstat -atunp
+                                 => Check my device's port is listening or not
+                                 => If both device is listening, check firewall
+  [root@debug ~]# netstat -atunp => same as lsof
+  [root@debug ~]# iftop          => Check display bandwith usage on your pc
+                                 => yum install epel-release
+                                 => yum install iftop
+        
+  # Check system uptime
+  [root@debug ~]# uptime
+  
+  # Check log
+  [root@debug ~]# tail -100 /var/log/messages | grep error
+  [root@debug ~]# cat /var/log/messages | grep fail
+  ```
+## IP Assigned but not Reachable
+```console
+ifconfig => Check interface (up? ip? mask?)
+ifconfig emp0s3 up
+ethtool enp0s3 
+> Link detected: yes => This interface is connected
+ifconfig => Check Subnet mask
+netstat -rnv => Check GW
+route -n => Check GW
+ping [GW IP] => Check if device can reach GW
+# If anything above is wrong, edit /etc/sysconfig/network-scripts/ifcfg-enp0s3
+# systemctl restart network (/etc/init.d/network restart)
+systemctl stop firewalld (Newer version)
+stop iptable.service  (Older version)
+
+```
+
+## Package management
+* __Guidelines :__
+  * Don't install packages that you don't need during initial installation
+  * Pay attention to add-on packages
+* __List all the pkgs in my system :__
+  * CentOS : `rpm -qa`
+  * Ubuntu : `apt list -installed`
+* __Remove pkgs:__
+  * CentOS : `rpm -e [package_name]`
+  * Ubuntu : `apt-get remove [package_name]`  
+* __Orphaned pkgs :__
+  * In order to install pkg A, you have to install pkg B. Once pkg A is remove, pkg B is orphaned pkg.
+  * __Installation :__ `yum install yum-utils`
+  * __List all orphaned pkgs :__ `package-cleanup --leaves`
+  * __Remove orphaned pkgs :__
+    * CentOS : `yum remove `package-cleanup -leaves` `
+    * Ubuntu : `apt-get autoremove`
