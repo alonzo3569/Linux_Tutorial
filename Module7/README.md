@@ -256,8 +256,9 @@
   rtt min/avg/max/mdev = 10.056/11.910/15.453/2.506 ms
   ```
 * __traceroute :__ 顯示到目標 IP 的所有節點(IP)
-  [root@www ~]# traceroute [選項與參數] IP
-  # 範例一：偵測本機到 yahoo 去的各節點連線狀態
+```console
+[root@www ~]# traceroute [選項與參數] IP
+# 範例一：偵測本機到 yahoo 去的各節點連線狀態
 [root@www ~]# traceroute -n tw.yahoo.com
 traceroute to tw.yahoo.com (119.160.246.241), 30 hops max, 40 byte packets
  1  192.168.1.254  0.279 ms  0.156 ms  0.169 ms
@@ -272,6 +273,7 @@ traceroute to tw.yahoo.com (119.160.246.241), 30 hops max, 40 byte packets
 10  * * *
 11  119.160.240.1  10.688 ms  10.590 ms 119.160.240.3  10.047 ms
 12  * * * <==可能有防火牆裝置等情況發生所致
+```
 
 
 * __netstat :__ 可查詢 IP:port 的狀態，以及啟動該 port 的程式
