@@ -263,3 +263,21 @@ After logging out or closing the terminal, all alias will disappear.
 * `history | grep awk` `history | grep chmod`
 * __Sorurce file :__ /home/alonzo/.bash_history
 * View other users' command history : login as root and checkout their .bash_history under their home directory.
+
+
+## References
+* [__BASH SHELL ALL__][0]
+* [__正規表示法__][1]
+* [__BASH comparison__][2]
+* [__linux source, sh, bash, ./ difference__][3]
+* [__set/env/export/source/exec__][4]
+* [__BASH data type (declare/typeset)__][5]
+* [__BASH SHELL basic__][6]
+
+[0]: http://linux.vbird.org/linux_basic/0320bash.php#settings_bashrc 
+[1]: http://linux.vbird.org/linux_basic/0330regularex.php
+[2]: https://tldp.org/LDP/abs/html/comparison-ops.html
+[3]: https://www.itread01.com/content/1548311242.html
+[4]: https://www.itread01.com/content/1547145183.html
+[5]: http://linux.vbird.org/linux_basic/0320bash.php#variable_var
+[6]: http://linux.vbird.org/linux_basic_train/unit07.php
