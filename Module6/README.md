@@ -274,6 +274,7 @@ After logging out or closing the terminal, all alias will disappear.
 * [__BASH data type (declare/typeset)__][5]
 * [__BASH SHELL basic__][6]
 * [__BASH if option__][7]
+* [__Basic Shell Scripts__][8]
 
 [0]: http://linux.vbird.org/linux_basic/0320bash.php#settings_bashrc 
 [1]: http://linux.vbird.org/linux_basic/0330regularex.php
@@ -283,3 +284,4 @@ After logging out or closing the terminal, all alias will disappear.
 [5]: http://linux.vbird.org/linux_basic/0320bash.php#variable_var
 [6]: http://linux.vbird.org/linux_basic_train/unit07.php
 [7]: http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_01.html
+[8]: https://blog.techbridge.cc/2019/11/15/linux-shell-script-tutorial/
