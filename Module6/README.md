@@ -285,3 +285,18 @@ After logging out or closing the terminal, all alias will disappear.
 [6]: http://linux.vbird.org/linux_basic_train/unit07.php
 [7]: http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_01.html
 [8]: https://blog.techbridge.cc/2019/11/15/linux-shell-script-tutorial/
+
+## Shell Script Reference:
+ * Echo styling:[ **link1**][9] , [**link2**][14]
+ * [Echo append string to files][10]
+ * Bash_profile & Bashrc: [**link1**][11] , [**link2**][12] , [**link3**][13]
+ * Apt v.s. dpkg: [**link1**][15] , [**link2**][16]
+
+[9]:    https://misc.flogisoft.com/bash/tip_colors_and_formatting
+[10]:    https://www.itread01.com/p/1386169.html
+[11]:    http://www.joshstaiger.org/archives/2005/07/bash_profile_vs.html
+[12]:	http://jamestw.logdown.com/posts/283485--bash-profile-bashrc-difference
+[13]:	https://www.itread01.com/p/203281.html
+[14]:	https://blog.csdn.net/solan8/article/details/70172074
+[15]:	https://herb123456.pixnet.net/blog/post/1009880
+[16]:	https://www.itread01.com/content/1548652698.html
